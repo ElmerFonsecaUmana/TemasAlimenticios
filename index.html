@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #ffffff; color: #111; }
+.app { max-width: 420px; margin: 0 auto; padding-bottom: 2rem; }
+
+.header { padding: 1rem 1rem 0.6rem; border-bottom: 1px solid #e5e5e5; }
+.header h1 { font-size: 18px; font-weight: 600; color: #111; }
+.header p { font-size: 13px; color: #777; margin-top: 2px; }
+
+.tabs-outer { position: relative; border-bottom: 1px solid #e5e5e5; }
+.tabs { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  white-space: nowrap;
+  outline: none;
+  -webkit-appearance: none;
+}
+.tab.active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+  font-weight: 600;
+}
+
+/* Fade indicators */
+.fade-left, .fade-right {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+.fade-left {
+  left: 0;
+  background: linear-gradient(to right, #fff 40%, transparent);
+  justify-content: flex-start;
+  padding-left: 6px;
+  opacity: 0;
+}
+.fade-right {
+  right: 0;
+  background: linear-gradient(to left, #fff 40%, transparent);
+  justify-content: flex-end;
+  padding-right: 6px;
+  opacity: 1;
+}
+.fade-arrow {
+  font-size: 20px;
+  color: #999;
+  font-weight: 300;
+  line-height: 1;
+  animation: blink 1.4s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+/* Legend */
+.legend { display: flex; gap: 14px; padding: 8px 12px; border-bottom: 1px solid #e5e5e5; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dg { background: #16a34a; } .dy { background: #ca8a04; } .dr { background: #dc2626; }
+
+/* Pages */
+.page { display: none; }
+.page.active { display: block; }
+
+.section { margin: 12px 12px 0; }
+.stitle { font-size: 11px; font-weight: 600; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 4px 11px;
+  border-radius: 20px;
+  border: 1px solid;
+  display: inline-block;
+}
+.cg { background: #f0fdf4; color: #166534; border-color: #86efac; }
+.cy { background: #fefce8; color: #854d0e; border-color: #fde047; }
+.cr { background: #fef2f2; color: #991b1b; border-color: #fca5a5; }
+
+.tipbox {
+  margin: 10px 12px 0;
+  background: #f8f8f8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.55;
+  border: 1px solid #e8e8e8;
+}
+.tipbox b { color: #222; }
+
+.warnbox {
+  margin: 10px 12px 0;
+  background: #fffbeb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.55;
+  border: 1px solid #fcd34d;
+}
+.warnbox b { color: #78350f; }
+
+/* Fiber cards */
+.fcard {
+  margin: 10px 12px 0;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 11px 13px;
+}
+.fcard-top { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.ficon { width: 32px; height: 32px; border-radius: 50%; background: #f0fdf4; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.fname { font-size: 14px; font-weight: 600; color: #111; }
+.fsub { font-size: 12px; color: #777; margin-top: 1px; }
+.ftags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 7px; }
+.ftag {
+  font-size: 11px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.fts { background: #eff6ff; color: #1e40af; border-color: #93c5fd; }
+.fti { background: #f5f3ff; color: #4c1d95; border-color: #c4b5fd; }
+.ftr { background: #f0fdf4; color: #14532d; border-color: #86efac; }
+.fnote { font-size: 12px; color: #666; line-height: 1.5; border-top: 1px solid #f0f0f0; padding-top: 7px; }
+.starlabel { font-size: 10px; background: #f0fdf4; color: #166534; border: 1px solid #86efac; border-radius: 10px; padding: 1px 6px; margin-left: 5px; vertical-align: middle; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Guía FODMAP rápida</h1>
+    <p>Referencia de bolsillo · v6</p>
+  </div>
+
+  <div class="tabs-outer">
+    <div class="tabs" id="tabsEl">
+      <button class="tab active" onclick="showPage('proteinas',this)">Proteínas</button>
+      <button class="tab" onclick="showPage('vegetales',this)">Vegetales</button>
+      <button class="tab" onclick="showPage('frutas',this)">Frutas</button>
+      <button class="tab" onclick="showPage('carbos',this)">Carbos</button>
+      <button class="tab" onclick="showPage('lacteos',this)">Lácteos</button>
+      <button class="tab" onclick="showPage('extras',this)">Extras</button>
+      <button class="tab" onclick="showPage('fibra',this)">Fibra 🫐</button>
+      <button class="tab" onclick="showPage('cr',this)">🇨🇷 CR</button>
+    </div>
+    <div class="fade-left" id="fadeLeft"><span class="fade-arrow">‹</span></div>
+    <div class="fade-right" id="fadeRight"><span class="fade-arrow">›</span></div>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="dot dg"></div>Seguro</div>
+    <div class="leg"><div class="dot dy"></div>Moderación</div>
+    <div class="leg"><div class="dot dr"></div>Evitar</div>
+  </div>
+
+  <!-- PROTEÍNAS -->
+  <div id="proteinas" class="page active">
+    <div class="section"><div class="stitle">Carnes y aves</div><div class="chips"><span class="chip cg">Pollo</span><span class="chip cg">Pavo</span><span class="chip cg">Res</span><span class="chip cg">Cerdo</span><span class="chip cg">Cordero</span></div></div>
+    <div class="section"><div class="stitle">Pescados y mariscos</div><div class="chips"><span class="chip cg">Salmón</span><span class="chip cg">Pargo</span><span class="chip cg">Dorado</span><span class="chip cg">Corvina</span><span class="chip cg">Tilapia</span><span class="chip cg">Atún</span><span class="chip cg">Sardinas</span><span class="chip cg">Camarones</span></div></div>
+    <div class="section"><div class="stitle">Otros</div><div class="chips"><span class="chip cg">Huevos</span><span class="chip cg">Tofu firme</span></div></div>
+    <div class="tipbox">⚠️ <b>Cuidado con:</b> ajo, cebolla, salsas, empanizados. La proteína en sí no tiene FODMAPs — el problema está en los condimentos.</div>
+  </div>
+
+  <!-- VEGETALES -->
+  <div id="vegetales" class="page">
+    <div class="section"><div class="stitle">Muy bien tolerados</div><div class="chips"><span class="chip cg">Zanahoria</span><span class="chip cg">Pepino</span><span class="chip cg">Lechuga</span><span class="chip cg">Espinaca</span><span class="chip cg">Tomate</span><span class="chip cg">Zucchini</span><span class="chip cg">Chayote</span><span class="chip cg">Papa</span><span class="chip cg">Ayote</span><span class="chip cg">Berenjena</span><span class="chip cg">Rábano</span><span class="chip cg">Judías verdes</span><span class="chip cg">Chile dulce</span><span class="chip cg">Repollo</span></div></div>
+    <div class="section"><div class="stitle">Controlar porción</div><div class="chips"><span class="chip cy">Brócoli (solo cabeza)</span><span class="chip cy">Camote</span><span class="chip cy">Maíz dulce (enlatado)</span></div></div>
+    <div class="section"><div class="stitle">Evitar</div><div class="chips"><span class="chip cr">Cebolla</span><span class="chip cr">Ajo</span><span class="chip cr">Coliflor</span><span class="chip cr">Espárragos</span><span class="chip cr">Champiñones</span><span class="chip cr">Puerro</span><span class="chip cr">Alcachofa</span></div></div>
+    <div class="tipbox">📌 <b>Repollo:</b> bajo en FODMAPs en porciones normales (Monash). <b>Maíz:</b> enlatado y escurrido se tolera mejor que fresco.</div>
+  </div>
+
+  <!-- FRUTAS -->
+  <div id="frutas" class="page">
+    <div class="section"><div class="stitle">Generalmente seguras</div><div class="chips"><span class="chip cg">Papaya</span><span class="chip cg">Piña</span><span class="chip cg">Fresas</span><span class="chip cg">Uvas</span><span class="chip cg">Kiwi</span><span class="chip cg">Naranja</span><span class="chip cg">Mandarina</span><span class="chip cg">Limón</span><span class="chip cg">Banano poco maduro</span><span class="chip cg">Maracuyá</span><span class="chip cg">Melón cantalupo</span></div></div>
+    <div class="section"><div class="stitle">Poca cantidad</div><div class="chips"><span class="chip cy">Arándanos</span><span class="chip cy">Frambuesas</span><span class="chip cy">Aguacate (¼ de uno)</span></div></div>
+    <div class="section"><div class="stitle">Evitar</div><div class="chips"><span class="chip cr">Manzana</span><span class="chip cr">Pera</span><span class="chip cr">Mango</span><span class="chip cr">Sandía</span><span class="chip cr">Ciruela</span><span class="chip cr">Durazno</span><span class="chip cr">Nectarina</span><span class="chip cr">Cerezas</span><span class="chip cr">Banano muy maduro</span></div></div>
+    <div class="warnbox">🥑 <b>Aguacate:</b> ¼ está bien. Porciones grandes causan síntomas.<br><br>🍌 <b>Banano:</b> amarillo/verdoso → seguro. Manchado → evitar.</div>
+  </div>
+
+  <!-- CARBOS -->
+  <div id="carbos" class="page">
+    <div class="section"><div class="stitle">Seguros</div><div class="chips"><span class="chip cg">Arroz</span><span class="chip cg">Quinoa</span><span class="chip cg">Tortillas de maíz</span><span class="chip cg">Papa</span><span class="chip cg">Yuca</span><span class="chip cg">Tapioca</span><span class="chip cg">Pasta sin gluten</span><span class="chip cg">Pan sin gluten</span><span class="chip cg">Rice cakes</span></div></div>
+    <div class="section"><div class="stitle">Moderado</div><div class="chips"><span class="chip cy">Avena (poca)</span></div></div>
+    <div class="section"><div class="stitle">Evitar</div><div class="chips"><span class="chip cr">Trigo en exceso</span><span class="chip cr">Centeno</span><span class="chip cr">Cebada</span></div></div>
+    <div class="section"><div class="stitle">Legumbres</div><div class="chips"><span class="chip cy">Garbanzos enlatados (poco)</span><span class="chip cy">Lentejas enlatadas (poco)</span><span class="chip cr">Frijoles negros</span><span class="chip cr">Frijoles rojos</span></div></div>
+  </div>
+
+  <!-- LÁCTEOS -->
+  <div id="lacteos" class="page">
+    <div class="section"><div class="stitle">Seguros</div><div class="chips"><span class="chip cg">Leche deslactosada</span><span class="chip cg">Yogurt sin lactosa</span><span class="chip cg">Queso parmesano</span><span class="chip cg">Queso cheddar</span><span class="chip cg">Queso suizo</span><span class="chip cg">Brie</span><span class="chip cg">Camembert</span></div></div>
+    <div class="section"><div class="stitle">Alternativas vegetales</div><div class="chips"><span class="chip cg">Leche de almendra</span><span class="chip cg">Leche de arroz</span><span class="chip cy">Leche de coco (2 cdas máx)</span></div></div>
+    <div class="section"><div class="stitle">Evitar</div><div class="chips"><span class="chip cr">Leche regular</span><span class="chip cr">Helados tradicionales</span><span class="chip cr">Leche condensada</span><span class="chip cr">Leche de coco (cantidad normal)</span></div></div>
+    <div class="section"><div class="stitle">Frutos secos</div><div class="chips"><span class="chip cg">Nueces</span><span class="chip cg">Pecanas</span><span class="chip cg">Macadamias</span><span class="chip cg">Maní</span><span class="chip cg">Chía</span><span class="chip cg">Linaza</span><span class="chip cy">Almendras (pocas)</span><span class="chip cr">Marañón</span><span class="chip cr">Pistachos</span></div></div>
+  </div>
+
+  <!-- EXTRAS -->
+  <div id="extras" class="page">
+    <div class="section"><div class="stitle">Endulzantes seguros</div><div class="chips"><span class="chip cg">Azúcar común</span><span class="chip cg">Maple syrup</span><span class="chip cg">Stevia</span></div></div>
+    <div class="section"><div class="stitle">Endulzantes a evitar</div><div class="chips"><span class="chip cr">Miel</span><span class="chip cr">Sorbitol</span><span class="chip cr">Xilitol</span><span class="chip cr">Maltitol</span><span class="chip cr">Jarabe de fructosa</span></div></div>
+    <div class="section"><div class="stitle">Chocolate</div><div class="chips"><span class="chip cy">Chocolate negro (poco)</span><span class="chip cr">Chocolate de leche</span><span class="chip cr">Chocolate en exceso</span></div></div>
+    <div class="section"><div class="stitle">Bebidas seguras</div><div class="chips"><span class="chip cg">Agua</span><span class="chip cg">Té</span><span class="chip cg">Té de jengibre</span><span class="chip cy">Té de menta (sin reflujo)</span><span class="chip cy">Café (moderado)</span></div></div>
+    <div class="section"><div class="stitle">Bebidas a evitar</div><div class="chips"><span class="chip cr">Alcohol</span><span class="chip cr">Gaseosas</span><span class="chip cr">Energizantes</span><span class="chip cr">Mucho café</span></div></div>
+    <div class="tipbox" style="margin-top:10px;">🍫 <b>Chocolate negro:</b> 2–3 cuadritos suelen tolerarse bien.<br><br>🌿 <b>Té de menta:</b> puede empeorar el reflujo aunque no tiene FODMAPs.<br><br>💡 <b>Truco:</b> aceite infusionado con ajo se tolera — los fructanos no pasan al aceite.</div>
+    <div class="section" style="margin-top:12px;"><div class="stitle">Los peores culpables</div><div class="chips"><span class="chip cr">Cebolla</span><span class="chip cr">Ajo</span><span class="chip cr">Frijoles</span><span class="chip cr">Leche regular</span><span class="chip cr">Manzana / Pera</span><span class="chip cr">Edulcorantes "sin azúcar"</span><span class="chip cr">Coliflor</span></div></div>
+  </div>
+
+  <!-- FIBRA -->
+  <div id="fibra" class="page">
+    <div class="tipbox" style="margin:12px 12px 0;">La fibra <b>soluble</b> (forma gel) es la más amigable con el colon sensible. La <b>insoluble</b> puede irritar si se introduce de golpe. Aumentar siempre lentamente y con mucha agua.</div>
+    <div class="section" style="margin-top:14px;"><div class="stitle">Estrellas — mejores para el colon</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🥝</div><div><div class="fname">Kiwi <span class="starlabel">top 1</span></div><div class="fsub">~2.1 g · 2 kiwis al día</div></div></div><div class="ftags"><span class="ftag fts">soluble</span><span class="ftag fti">insoluble</span><span class="ftag ftr">bajo FODMAP</span></div><div class="fnote">El más estudiado para tránsito intestinal. Contiene actinidina (enzima digestiva). 2 kiwis al día muestran mejora clínica comprobada.</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🍈</div><div><div class="fname">Papaya <span class="starlabel">top 2</span></div><div class="fsub">~1.8 g · muy accesible en CR</div></div></div><div class="ftags"><span class="ftag fts">soluble</span><span class="ftag ftr">bajo FODMAP</span></div><div class="fnote">Papaína: enzima que facilita la digestión. Suavísima con el colon. Madura pero no demasiado.</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🍓</div><div><div class="fname">Fresas</div><div class="fsub">~2 g por taza</div></div></div><div class="ftags"><span class="ftag fts">soluble (pectina)</span><span class="ftag ftr">bajo FODMAP</span></div><div class="fnote">Ricas en pectina, que forma gel y no irrita. Antiinflamatorias. Ideales en yogurt sin lactosa.</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🍊</div><div><div class="fname">Naranja / mandarina</div><div class="fsub">~2.3 g · comer la pulpa</div></div></div><div class="ftags"><span class="ftag fts">soluble (pectina)</span><span class="ftag ftr">bajo FODMAP</span></div><div class="fnote">La fibra está en la pulpa y el bagazo, no en el jugo. Comer la fruta entera, no solo exprimirla.</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🍌</div><div><div class="fname">Banano poco maduro</div><div class="fsub">~2.6 g · efecto prebiótico</div></div></div><div class="ftags"><span class="ftag fts">almidón resistente</span><span class="ftag ftr">bajo FODMAP</span></div><div class="fnote">Doble beneficio: fibra + prebiótico. Amarillo/verdoso = bien. Manchado = evitar.</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🍍</div><div><div class="fname">Piña</div><div class="fsub">~1.4 g · muy accesible en CR</div></div></div><div class="ftags"><span class="ftag fts">soluble</span><span class="ftag ftr">bajo FODMAP</span></div><div class="fnote">Bromelina: enzima digestiva potente. Mejor fresca que enlatada.</div></div>
+
+    <div class="section" style="margin-top:14px;"><div class="stitle">Con moderación</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🍋</div><div><div class="fname">Maracuyá</div><div class="fsub">~6.1 g · empezar con poco</div></div></div><div class="ftags"><span class="ftag fts">soluble</span><span class="ftag fti">insoluble</span><span class="ftag ftr">bajo FODMAP</span></div><div class="fnote">Muy alta en fibra, pero la fracción insoluble puede irritar si el colon está sensible.</div></div>
+
+    <div class="fcard"><div class="fcard-top"><div class="ficon">🫐</div><div><div class="fname">Frambuesas / arándanos</div><div class="fsub">~4–8 g · máximo ½ taza</div></div></div><div class="ftags"><span class="ftag fts">soluble</span><span class="ftag ftr">bajo FODMAP (poca cantidad)</span></div><div class="fnote">Excelente fuente. A mayor cantidad puede aumentar gases en personas sensibles.</div></div>
+
+    <div class="section" style="margin-top:14px;"><div class="stitle">Complementos no-fruta</div></div>
+    <div class="tipbox"><b>Chía (1–2 cdas):</b> forma gel, suaviza el tránsito. Siempre con mucha agua.<br><br><b>Avena en hojuelas (½ taza):</b> betaglucano — fibra soluble muy estudiada para el colon.<br><br><b>Psyllium / Metamucil:</b> suplemento más suave para colon irritable. 100% fibra soluble. Empezar con ½ cdita.</div>
+  </div>
+
+  <!-- CR -->
+  <div id="cr" class="page">
+    <div class="section"><div class="stitle">Comida tica que sí va</div><div class="chips"><span class="chip cg">Arroz blanco</span><span class="chip cg">Pollo a la plancha</span><span class="chip cg">Pescado</span><span class="chip cg">Tortillas de maíz</span><span class="chip cg">Papa</span><span class="chip cg">Yuca</span><span class="chip cg">Chayote</span><span class="chip cg">Ayote</span><span class="chip cg">Papaya</span><span class="chip cg">Piña</span></div></div>
+    <div class="section"><div class="stitle">Con cuidado</div><div class="chips"><span class="chip cy">Gallo pinto</span><span class="chip cy">Casado muy grande</span><span class="chip cy">Picadillo con cebolla</span><span class="chip cy">Sopas con ajo</span><span class="chip cy">Guacamole (porción grande)</span></div></div>
+    <div class="warnbox">🥑 <b>Guacamole:</b> trampa frecuente. Porciones típicas (½ aguacate o más) ya pueden causar síntomas.</div>
+    <div class="tipbox" style="margin-top:8px;">🍳 <b>Desayunos seguros:</b> avena moderada + papaya · huevos + tortilla de maíz · yogurt sin lactosa + fresas · smoothie de papaya · rice cakes con mantequilla de maní</div>
+    <div class="tipbox" style="margin-top:8px;">📋 <b>Base segura (2–3 semanas):</b> arroz, papa, papaya, avena poca, yogurt sin lactosa, pollo, huevos, zanahoria, zucchini. Luego reintroducir de uno en uno.</div>
+  </div>
+
+</div>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+var tabsEl = document.getElementById('tabsEl');
+var fadeLeft = document.getElementById('fadeLeft');
+var fadeRight = document.getElementById('fadeRight');
+
+function updateFades() {
+  var sl = tabsEl.scrollLeft;
+  var maxScroll = tabsEl.scrollWidth - tabsEl.clientWidth;
+  fadeLeft.style.opacity = sl > 8 ? '1' : '0';
+  fadeRight.style.opacity = sl < maxScroll - 8 ? '1' : '0';
+}
+
+tabsEl.addEventListener('scroll', updateFades, { passive: true });
+setTimeout(updateFades, 150);
+</script>
+</body>
+</html>
