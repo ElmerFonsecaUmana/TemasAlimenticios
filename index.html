@@ -1,0 +1,347 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.app { max-width: 400px; margin: 0 auto; padding: 0 0 2rem; }
+.header { padding: 1rem 1rem 0.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.header h1 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+.header p { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+.tabs { display: flex; gap: 6px; padding: 10px 1rem; overflow-x: auto; scrollbar-width: none; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex-shrink: 0; font-size: 13px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; white-space: nowrap; }
+.tab.active { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; font-weight: 500; }
+.legend { display: flex; gap: 12px; padding: 10px 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-text-secondary); }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dot-green { background: #1D9E75; }
+.dot-yellow { background: #BA7517; }
+.dot-red { background: #E24B4A; }
+.section { margin: 12px 1rem 0; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.items { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 13px; padding: 4px 10px; border-radius: 20px; border: 0.5px solid; }
+.chip-green { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; }
+.chip-yellow { background: #FAEEDA; color: #854F0B; border-color: #EF9F27; }
+.chip-red { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+.tip-box { margin: 12px 1rem 0; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+.tip-box strong { color: var(--color-text-primary); font-weight: 500; }
+.warn-box { margin: 12px 1rem 0; background: #FAEEDA; border-radius: var(--border-radius-md); padding: 10px 12px; font-size: 13px; color: #854F0B; line-height: 1.5; border: 0.5px solid #EF9F27; }
+.warn-box strong { color: #633806; font-weight: 500; }
+.page { display: none; }
+.page.active { display: block; }
+.fiber-card { margin: 10px 1rem 0; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; }
+.fiber-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.fiber-icon { width: 32px; height: 32px; border-radius: 50%; background: #E1F5EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.fiber-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.fiber-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; }
+.fiber-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 7px; }
+.ftag { font-size: 11px; padding: 2px 7px; border-radius: 20px; border: 0.5px solid; }
+.ftag-s { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+.ftag-i { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+.ftag-r { background: #EAF3DE; color: #27500A; border-color: #97C459; }
+.fiber-note { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 7px; }
+.star-label { font-size: 11px; font-weight: 500; color: #0F6E56; background: #E1F5EE; border: 0.5px solid #5DCAA5; border-radius: 10px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; }
+</style>
+
+<div class="app">
+  <div class="header">
+    <h1>Guía FODMAP rápida</h1>
+    <p>Referencia de bolsillo para digestión feliz · v3</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showPage('proteinas',this)">Proteínas</button>
+    <button class="tab" onclick="showPage('vegetales',this)">Vegetales</button>
+    <button class="tab" onclick="showPage('frutas',this)">Frutas</button>
+    <button class="tab" onclick="showPage('carbos',this)">Carbos</button>
+    <button class="tab" onclick="showPage('lacteos',this)">Lácteos</button>
+    <button class="tab" onclick="showPage('extras',this)">Extras</button>
+    <button class="tab" onclick="showPage('fibra',this)">Fibra</button>
+    <button class="tab" onclick="showPage('cr',this)">🇨🇷 CR</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-green"></div> Seguro</div>
+    <div class="legend-item"><div class="dot dot-yellow"></div> Moderación</div>
+    <div class="legend-item"><div class="dot dot-red"></div> Evitar</div>
+  </div>
+
+  <div id="proteinas" class="page active">
+    <div class="section">
+      <div class="section-title">Carnes y aves</div>
+      <div class="items">
+        <span class="chip chip-green">Pollo</span><span class="chip chip-green">Pavo</span><span class="chip chip-green">Res</span><span class="chip chip-green">Cerdo</span><span class="chip chip-green">Cordero</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Pescados y mariscos</div>
+      <div class="items">
+        <span class="chip chip-green">Salmón</span><span class="chip chip-green">Pargo</span><span class="chip chip-green">Dorado</span><span class="chip chip-green">Corvina</span><span class="chip chip-green">Tilapia</span><span class="chip chip-green">Atún</span><span class="chip chip-green">Sardinas</span><span class="chip chip-green">Camarones</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Otros</div>
+      <div class="items">
+        <span class="chip chip-green">Huevos</span><span class="chip chip-green">Tofu firme</span>
+      </div>
+    </div>
+    <div class="tip-box">⚠️ <strong>Cuidado con:</strong> ajo, cebolla, salsas, empanizados. La proteína en sí no tiene FODMAPs — el problema está en los condimentos.</div>
+  </div>
+
+  <div id="vegetales" class="page">
+    <div class="section">
+      <div class="section-title">Muy bien tolerados</div>
+      <div class="items">
+        <span class="chip chip-green">Zanahoria</span><span class="chip chip-green">Pepino</span><span class="chip chip-green">Lechuga</span><span class="chip chip-green">Espinaca</span><span class="chip chip-green">Tomate</span><span class="chip chip-green">Zucchini</span><span class="chip chip-green">Chayote</span><span class="chip chip-green">Papa</span><span class="chip chip-green">Ayote</span><span class="chip chip-green">Berenjena</span><span class="chip chip-green">Rábano</span><span class="chip chip-green">Judías verdes</span><span class="chip chip-green">Chile dulce</span><span class="chip chip-green">Repollo</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Controlar porción</div>
+      <div class="items">
+        <span class="chip chip-yellow">Brócoli (solo cabeza)</span><span class="chip chip-yellow">Camote</span><span class="chip chip-yellow">Maíz dulce (enlatado)</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Evitar</div>
+      <div class="items">
+        <span class="chip chip-red">Cebolla</span><span class="chip chip-red">Ajo</span><span class="chip chip-red">Coliflor</span><span class="chip chip-red">Espárragos</span><span class="chip chip-red">Champiñones</span><span class="chip chip-red">Puerro</span><span class="chip chip-red">Alcachofa</span>
+      </div>
+    </div>
+    <div class="tip-box">📌 <strong>Repollo:</strong> bajo en FODMAPs en porciones normales (Monash). <strong>Maíz:</strong> enlatado y escurrido se tolera mejor que fresco en cantidad.</div>
+  </div>
+
+  <div id="frutas" class="page">
+    <div class="section">
+      <div class="section-title">Generalmente seguras</div>
+      <div class="items">
+        <span class="chip chip-green">Papaya</span><span class="chip chip-green">Piña</span><span class="chip chip-green">Fresas</span><span class="chip chip-green">Uvas</span><span class="chip chip-green">Kiwi</span><span class="chip chip-green">Naranja</span><span class="chip chip-green">Mandarina</span><span class="chip chip-green">Limón</span><span class="chip chip-green">Banano poco maduro</span><span class="chip chip-green">Maracuyá</span><span class="chip chip-green">Melón cantalupo</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Poca cantidad</div>
+      <div class="items">
+        <span class="chip chip-yellow">Arándanos</span><span class="chip chip-yellow">Frambuesas</span><span class="chip chip-yellow">Aguacate (¼ de uno)</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Evitar</div>
+      <div class="items">
+        <span class="chip chip-red">Manzana</span><span class="chip chip-red">Pera</span><span class="chip chip-red">Mango</span><span class="chip chip-red">Sandía</span><span class="chip chip-red">Ciruela</span><span class="chip chip-red">Durazno</span><span class="chip chip-red">Nectarina</span><span class="chip chip-red">Cerezas</span><span class="chip chip-red">Banano muy maduro</span>
+      </div>
+    </div>
+    <div class="warn-box">🥑 <strong>Aguacate:</strong> ¼ de uno está bien. Porciones grandes (½ o más) pueden causar síntomas — trampa frecuente en CR.<br><br>🍌 <strong>Banano:</strong> amarillo/verdoso → seguro. Manchado/muy maduro → evitar.</div>
+  </div>
+
+  <div id="carbos" class="page">
+    <div class="section">
+      <div class="section-title">Seguros</div>
+      <div class="items">
+        <span class="chip chip-green">Arroz</span><span class="chip chip-green">Quinoa</span><span class="chip chip-green">Tortillas de maíz</span><span class="chip chip-green">Papa</span><span class="chip chip-green">Yuca</span><span class="chip chip-green">Tapioca</span><span class="chip chip-green">Pasta sin gluten</span><span class="chip chip-green">Pan sin gluten</span><span class="chip chip-green">Rice cakes</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Moderado</div>
+      <div class="items">
+        <span class="chip chip-yellow">Avena (poca)</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Evitar</div>
+      <div class="items">
+        <span class="chip chip-red">Trigo en exceso</span><span class="chip chip-red">Centeno</span><span class="chip chip-red">Cebada</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Legumbres</div>
+      <div class="items">
+        <span class="chip chip-yellow">Garbanzos enlatados (poco)</span><span class="chip chip-yellow">Lentejas enlatadas (poco)</span><span class="chip chip-red">Frijoles negros</span><span class="chip chip-red">Frijoles rojos</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="lacteos" class="page">
+    <div class="section">
+      <div class="section-title">Seguros</div>
+      <div class="items">
+        <span class="chip chip-green">Leche deslactosada</span><span class="chip chip-green">Yogurt sin lactosa</span><span class="chip chip-green">Queso parmesano</span><span class="chip chip-green">Queso cheddar</span><span class="chip chip-green">Queso suizo</span><span class="chip chip-green">Brie</span><span class="chip chip-green">Camembert</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Alternativas vegetales</div>
+      <div class="items">
+        <span class="chip chip-green">Leche de almendra</span><span class="chip chip-green">Leche de arroz</span><span class="chip chip-yellow">Leche de coco (2 cdas máx)</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Evitar</div>
+      <div class="items">
+        <span class="chip chip-red">Leche regular</span><span class="chip chip-red">Helados tradicionales</span><span class="chip chip-red">Leche condensada</span><span class="chip chip-red">Leche de coco (cantidad normal)</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Frutos secos</div>
+      <div class="items">
+        <span class="chip chip-green">Nueces</span><span class="chip chip-green">Pecanas</span><span class="chip chip-green">Macadamias</span><span class="chip chip-green">Maní</span><span class="chip chip-green">Chía</span><span class="chip chip-green">Linaza</span><span class="chip chip-yellow">Almendras (pocas)</span><span class="chip chip-red">Marañón</span><span class="chip chip-red">Pistachos</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="extras" class="page">
+    <div class="section">
+      <div class="section-title">Endulzantes seguros</div>
+      <div class="items">
+        <span class="chip chip-green">Azúcar común</span><span class="chip chip-green">Maple syrup</span><span class="chip chip-green">Stevia</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Endulzantes a evitar</div>
+      <div class="items">
+        <span class="chip chip-red">Miel</span><span class="chip chip-red">Sorbitol</span><span class="chip chip-red">Xilitol</span><span class="chip chip-red">Maltitol</span><span class="chip chip-red">Jarabe de fructosa</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Chocolate</div>
+      <div class="items">
+        <span class="chip chip-yellow">Chocolate negro (poco)</span><span class="chip chip-red">Chocolate de leche</span><span class="chip chip-red">Chocolate en exceso</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Bebidas seguras</div>
+      <div class="items">
+        <span class="chip chip-green">Agua</span><span class="chip chip-green">Té</span><span class="chip chip-green">Té de jengibre</span><span class="chip chip-yellow">Té de menta (sin reflujo)</span><span class="chip chip-yellow">Café (moderado)</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Bebidas a evitar</div>
+      <div class="items">
+        <span class="chip chip-red">Alcohol</span><span class="chip chip-red">Gaseosas</span><span class="chip chip-red">Energizantes</span><span class="chip chip-red">Mucho café</span>
+      </div>
+    </div>
+    <div class="tip-box">🍫 <strong>Chocolate negro:</strong> 2–3 cuadritos suelen tolerarse. En exceso o de leche, puede causar síntomas.<br><br>🌿 <strong>Té de menta:</strong> sin problema FODMAP, pero puede empeorar el reflujo.<br><br>💡 <strong>Truco:</strong> aceite infusionado con ajo se tolera bien — los fructanos no pasan al aceite.</div>
+    <div class="section" style="margin-top:12px;">
+      <div class="section-title">Los peores culpables</div>
+      <div class="items">
+        <span class="chip chip-red">Cebolla</span><span class="chip chip-red">Ajo</span><span class="chip chip-red">Frijoles</span><span class="chip chip-red">Leche regular</span><span class="chip chip-red">Manzana / Pera</span><span class="chip chip-red">Edulcorantes "sin azúcar"</span><span class="chip chip-red">Coliflor</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="fibra" class="page">
+    <div class="tip-box" style="margin: 12px 1rem 0;">La fibra <strong>soluble</strong> (forma gel) es la más amigable con el colon sensible. La <strong>insoluble</strong> (salvado, cáscara) puede irritar si se introduce de golpe. Aumentar siempre lentamente y con mucha agua.</div>
+
+    <div class="section" style="margin-top:14px;">
+      <div class="section-title">Estrellas — las mejores para el colon</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#0F6E56;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Kiwi <span class="star-label">top 1</span></div><div class="fiber-sub">~2.1 g · 2 kiwis al día</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">soluble</span><span class="ftag ftag-i">insoluble</span><span class="ftag ftag-r">bajo FODMAP</span></div>
+      <div class="fiber-note">El más estudiado para tránsito intestinal. Contiene actinidina (enzima digestiva propia). 2 kiwis al día muestran mejora clínica comprobada.</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#0F6E56;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Papaya <span class="star-label">top 2</span></div><div class="fiber-sub">~1.8 g · muy accesible en CR</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">soluble</span><span class="ftag ftag-r">bajo FODMAP</span></div>
+      <div class="fiber-note">Papaína: enzima que facilita la digestión de proteínas. Suavísima con el colon. Madura pero no demasiado.</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#0F6E56;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Fresas</div><div class="fiber-sub">~2 g por taza</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">soluble (pectina)</span><span class="ftag ftag-r">bajo FODMAP</span></div>
+      <div class="fiber-note">Ricas en pectina, que forma gel y no irrita. Antiinflamatorias. Ideales en yogurt sin lactosa.</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#0F6E56;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Naranja / mandarina</div><div class="fiber-sub">~2.3 g · comer la pulpa</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">soluble (pectina)</span><span class="ftag ftag-r">bajo FODMAP</span></div>
+      <div class="fiber-note">La fibra está en la pulpa y el bagazo, no en el jugo. Comer la fruta entera, no solo exprimirla.</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#0F6E56;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Banano poco maduro</div><div class="fiber-sub">~2.6 g · efecto prebiótico</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">almidón resistente</span><span class="ftag ftag-r">bajo FODMAP</span></div>
+      <div class="fiber-note">Doble beneficio: fibra + prebiótico. Alimenta bacterias buenas sin fermentar rápido. Amarillo/verdoso = bien. Manchado = evitar.</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#0F6E56;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Piña</div><div class="fiber-sub">~1.4 g · muy accesible en CR</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">soluble</span><span class="ftag ftag-r">bajo FODMAP</span></div>
+      <div class="fiber-note">Bromelina: enzima digestiva potente, especialmente con proteínas. Mejor fresca que enlatada.</div>
+    </div>
+
+    <div class="section" style="margin-top:14px;">
+      <div class="section-title">Con moderación</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#1D9E75;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Maracuyá</div><div class="fiber-sub">~6.1 g · fibra alta, empezar poco</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">soluble</span><span class="ftag ftag-i">insoluble</span><span class="ftag ftag-r">bajo FODMAP</span></div>
+      <div class="fiber-note">Muy alta en fibra, pero la fracción insoluble puede irritar si el colon está sensible. Empezar con poca cantidad.</div>
+    </div>
+
+    <div class="fiber-card">
+      <div class="fiber-card-top">
+        <div class="fiber-icon"><i class="ti ti-leaf" style="font-size:16px; color:#1D9E75;" aria-hidden="true"></i></div>
+        <div><div class="fiber-name">Frambuesas / arándanos</div><div class="fiber-sub">~4–8 g por taza · empezar con ½</div></div>
+      </div>
+      <div class="fiber-tags"><span class="ftag ftag-s">soluble</span><span class="ftag ftag-r">bajo FODMAP (poca cantidad)</span></div>
+      <div class="fiber-note">Excelente fuente. A mayor cantidad puede aumentar gases en personas sensibles. Máximo ½ taza al inicio.</div>
+    </div>
+
+    <div class="section" style="margin-top:14px;">
+      <div class="section-title">Complementos no-fruta que suman</div>
+    </div>
+    <div class="tip-box">
+      <strong>Chía (1–2 cdas):</strong> forma gel, suaviza el tránsito. Empezar con 1 cda y mucha agua.<br><br>
+      <strong>Avena en hojuelas (½ taza):</strong> betaglucano — la fibra soluble más estudiada para el colon.<br><br>
+      <strong>Psyllium / Metamucil:</strong> el suplemento más suave para colon irritable. 100% fibra soluble. Empezar con ½ cdita.
+    </div>
+  </div>
+
+  <div id="cr" class="page">
+    <div class="section">
+      <div class="section-title">Comida tica que sí va</div>
+      <div class="items">
+        <span class="chip chip-green">Arroz blanco</span><span class="chip chip-green">Pollo a la plancha</span><span class="chip chip-green">Pescado</span><span class="chip chip-green">Tortillas de maíz</span><span class="chip chip-green">Papa</span><span class="chip chip-green">Yuca</span><span class="chip chip-green">Chayote</span><span class="chip chip-green">Ayote</span><span class="chip chip-green">Papaya</span><span class="chip chip-green">Piña</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Con cuidado</div>
+      <div class="items">
+        <span class="chip chip-yellow">Gallo pinto</span><span class="chip chip-yellow">Casado muy grande</span><span class="chip chip-yellow">Picadillo con cebolla</span><span class="chip chip-yellow">Sopas con ajo</span><span class="chip chip-yellow">Guacamole (porción grande)</span>
+      </div>
+    </div>
+    <div class="warn-box">🥑 <strong>Guacamole:</strong> trampa frecuente en CR. El aguacate en poca cantidad está bien, pero las porciones típicas (½ o más) ya pueden causar síntomas.</div>
+    <div class="tip-box" style="margin-top:8px;">🍳 <strong>Desayunos seguros:</strong> avena moderada + papaya · huevos + tortilla de maíz · yogurt sin lactosa + fresas · smoothie de papaya · rice cakes con mantequilla de maní</div>
+    <div class="tip-box" style="margin-top:8px;">📋 <strong>Base segura para empezar (2–3 semanas):</strong> arroz, papa, papaya, avena poca, yogurt sin lactosa, pollo, huevos, zanahoria, zucchini. Luego reintroducir de uno en uno.</div>
+  </div>
+</div>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
